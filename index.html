@@ -42,5 +42,54 @@
     </div>
 
     <script src="script.js"></script>
+    <style>
+body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+</style>
+<script type="text/javascript">
+    // 1. Chặn chuột phải
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. Chặn các tổ hợp phím phổ biến
+    document.onkeydown = function(e) {
+        // Chặn F12 (keyCode 123)
+        if (e.keyCode == 123) {
+            return false;
+        }
+
+        // Chặn Ctrl + Shift + I (Inspect)
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+            return false;
+        }
+
+        // Chặn Ctrl + Shift + J (Console)
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+            return false;
+        }
+
+        // Chặn Ctrl + Shift + C (Elements)
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+            return false;
+        }
+
+        // Chặn Ctrl + U (View Source)
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+            return false;
+        }
+
+        // Chặn Ctrl + S (Save page)
+        if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) {
+            return false;
+        }
+    };
+</script>
 </body>
 </html>
