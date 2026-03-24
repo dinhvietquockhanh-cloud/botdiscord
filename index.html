@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex Pro - Smogon Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CON CHÓ WENZ HENZ</h1>
+            <div class="controls">
+                <input type="text" id="search" placeholder="Search: Charizard, Fire, OU, Fly, 6...">
+                <select id="gen-filter">
+                    <option value="all">Tất cả Generations</option>
+                    <option value="1">Gen 1 - Kanto</option>
+                    <option value="2">Gen 2 - Johto</option>
+                    <option value="3">Gen 3 - Hoenn</option>
+                    <option value="4">Gen 4 - Sinnoh</option>
+                    <option value="5">Gen 5 - Unova</option>
+                    <option value="6">Gen 6 - Kalos</option>
+                    <option value="7">Gen 7 - Alola</option>
+                </select>
+            </div>
+        </header>
+
+        <div id="loading" class="loader-container">
+            <div class="pokeball"></div>
+            <p>ĐANG TRUY XUẤT DỮ LIỆU...</p>
+        </div>
+
+        <div id="pokedex" class="grid"></div>
+    </div>
+
+    <div id="modal-overlay" onclick="closeModal()">
+        <div id="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
