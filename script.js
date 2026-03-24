@@ -19,17 +19,21 @@ const TYPE_CHART = {
     normal: { ghost: 0, rock: 0.5, steel: 0.5 }
 };
 
-const GEN_RANGES = { "1": [1, 151], "2": [152, 251], "3": [252, 386], "4": [387, 493], "5": [494, 649], "6": [650, 721], "7": [722, 802] };
+// Cập nhật Gen 8 và Gen 9
+const GEN_RANGES = { 
+    "1": [1, 151], "2": [152, 251], "3": [252, 386], "4": [387, 493], 
+    "5": [494, 649], "6": [650, 721], "7": [722, 809], "8": [810, 905], "9": [906, 1025] 
+};
 let allPokemon = [];
 
-// Hàm lấy link GIF 3D từ Showdown
 function getShowdownGif(name) {
     return `https://play.pokemonshowdown.com/sprites/ani/${name.toLowerCase().replace(/ /g, '')}.gif`;
 }
 
 async function init() {
     try {
-        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=802');
+        // Limit 1025 để lấy hết Gen 9
+        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
         const data = await res.json();
         const promises = data.results.map(p => fetch(p.url).then(r => r.json()));
         allPokemon = await Promise.all(promises);
@@ -46,7 +50,7 @@ function render(list) {
                  onerror="this.src='${p.sprites.other['official-artwork'].front_default}'" 
                  alt="${p.name}" style="height:100px; object-fit:contain">
             <p style="opacity:0.5; font-weight:bold; margin:0">#${p.id}</p>
-            <h3 style="text-transform:capitalize">${p.name}</h3>
+            <h3 style="text-transform:capitalize">${p.name.replace(/-/g, ' ')}</h3>
             <div class="types">${p.types.map(t => `<span class="type-badge ${t.type.name}">${t.type.name}</span>`).join('')}</div>
         </div>
     `).join('');
@@ -132,7 +136,8 @@ async function changeForm(url) {
 async function renderModalContent(p) {
     const weaknesses = calcWeakness(p.types.map(t => t.type.name));
     const tier = getTier(p);
-    const evoChain = await getEvolutionChain(p.id > 10000 ? p.species.url.split('/').filter(Boolean).pop() : p.id);
+    const baseIdForEvo = p.id > 10000 ? p.species.url.split('/').filter(Boolean).pop() : p.id;
+    const evoChain = await getEvolutionChain(baseIdForEvo);
     const heightM = p.height / 10;
     const weightKg = p.weight / 10;
 
@@ -193,7 +198,7 @@ async function renderModalContent(p) {
                 </div>
                 <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; margin-bottom:20px">
                     <p style="margin:0 0 10px 0"><strong>Abilities:</strong></p>
-                    ${p.abilities.map(a => `<div style="text-transform:capitalize; font-size:0.9rem; margin-bottom:5px">⚡ ${a.ability.name.replace('-', ' ')} ${a.is_hidden ? '<span style="color:var(--accent)">[H]</span>' : ''}</div>`).join('')}
+                    ${p.abilities.map(a => `<div style="text-transform:capitalize; font-size:0.9rem; margin-bottom:5px">⚡ ${a.ability.name.replace(/-/g, ' ')} ${a.is_hidden ? '<span style="color:var(--accent)">[H]</span>' : ''}</div>`).join('')}
                 </div>
                 <div style="display:flex; gap:10px; margin-bottom:20px">
                     <div class="item-container" style="flex:1; margin:0"><img src="${img1}" class="item-icon"><span>${item1}</span></div>
