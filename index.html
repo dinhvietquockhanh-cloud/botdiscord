@@ -22,6 +22,8 @@
                     <option value="5">Gen 5 - Unova</option>
                     <option value="6">Gen 6 - Kalos</option>
                     <option value="7">Gen 7 - Alola</option>
+                    <option value="8">Gen 8 - Galar</option>
+                    <option value="9">Gen 9 - Paldea</option>
                 </select>
             </div>
         </header>
@@ -53,42 +55,17 @@ body {
 }
 </style>
 <script type="text/javascript">
-    // 1. Chặn chuột phải
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
     });
 
-    // 2. Chặn các tổ hợp phím phổ biến
     document.onkeydown = function(e) {
-        // Chặn F12 (keyCode 123)
-        if (e.keyCode == 123) {
-            return false;
-        }
-
-        // Chặn Ctrl + Shift + I (Inspect)
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
-            return false;
-        }
-
-        // Chặn Ctrl + Shift + J (Console)
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
-            return false;
-        }
-
-        // Chặn Ctrl + Shift + C (Elements)
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
-            return false;
-        }
-
-        // Chặn Ctrl + U (View Source)
-        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
-            return false;
-        }
-
-        // Chặn Ctrl + S (Save page)
-        if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) {
-            return false;
-        }
+        if (e.keyCode == 123) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false;
     };
 </script>
 </body>
