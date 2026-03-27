@@ -2,23 +2,39 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'restart',
-    async execute(message, args) {
-        if (!message.member.permissions.has('Administrator')) {
-            return message.reply("```ansi\n[31m[!] ACCESS DENIED[0m\n```");
+    description: 'Khởi động lại hệ thống Core',
+    async execute(message, args, log) {
+        const ADMIN_ID = "1179313589396451348"; 
+
+        if (message.author.id !== ADMIN_ID) {
+            return message.reply("❌ **CẢNH BÁO:** Ngươi không có quyền can thiệp vào hệ thống Core!");
         }
 
-        const msg = await message.reply({
-            embeds: [
-                new EmbedBuilder()
-                    .setColor('#1a1a1a')
-                    .setTitle('🔴 CORE REBOOT')
-                    .setDescription('```ansi\n[31m[WARNING] Đang ngắt nguồn...[0m\n```')
-            ]
-        });
+        const botAvatar = message.client.user.displayAvatarURL();
+        
+        const restartEmbed = new EmbedBuilder()
+            .setColor('#f1c40f')
+            .setAuthor({ name: 'HỆ THỐNG QUẢN TRỊ CORE', iconURL: botAvatar })
+            .setTitle('🔄 TIẾN HÀNH TÁI KHỞI ĐỘNG')
+            .setDescription(
+                `>>> **Trạng thái:** Đang ngắt kết nối tạm thời...\n` +
+                `**Tiến trình:** Lưu trữ dữ liệu & Giải phóng bộ nhớ.`
+            )
+            .addFields({ name: '👤 Người thực hiện', value: `<@${message.author.id}>`, inline: true })
+            .setFooter({ text: 'Render sẽ tự động phục hồi tiến trình sau 30s.' })
+            .setTimestamp();
 
-        setTimeout(async () => {
-            await msg.edit({ content: '`[ SYSTEM_DELETED ]`', embeds: [] }).catch(() => null);
-            setTimeout(() => process.exit(), 1000);
+        await message.reply({ embeds: [restartEmbed] });
+
+        // Gửi log ANSI chuyên nghiệp như trong main.js của ông
+        if (log) {
+            await log(`RESTART: Hệ thống được yêu cầu khởi động lại bởi ${message.author.tag}`, "CMD");
+        }
+
+        // Đợi 2 giây để gửi xong tin nhắn rồi mới đóng
+        setTimeout(() => {
+            console.log("\x1b[31m[RESTART]\x1b[0m Tiến trình đang thoát để Render tự bật lại...");
+            process.exit(0);
         }, 2000);
-    }
+    },
 };
