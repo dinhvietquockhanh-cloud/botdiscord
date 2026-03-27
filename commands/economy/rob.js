@@ -1,6 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
 const User = require('../../models/User'); 
-git add .
 const cooldowns = new Map();
 
 module.exports = {
