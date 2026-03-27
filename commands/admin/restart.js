@@ -4,7 +4,7 @@ module.exports = {
     name: 'restart',
     description: 'Khởi động lại hệ thống Core',
     async execute(message, args, log) {
-        const ADMIN_ID = "1179313589396451348"; 
+        const ADMIN_ID = "735170332058452019"; 
 
         if (message.author.id !== ADMIN_ID) {
             return message.reply("❌ **CẢNH BÁO:** Ngươi không có quyền can thiệp vào hệ thống Core!");
@@ -26,12 +26,9 @@ module.exports = {
 
         await message.reply({ embeds: [restartEmbed] });
 
-        // Gửi log ANSI chuyên nghiệp như trong main.js của ông
         if (log) {
             await log(`RESTART: Hệ thống được yêu cầu khởi động lại bởi ${message.author.tag}`, "CMD");
         }
-
-        // Đợi 2 giây để gửi xong tin nhắn rồi mới đóng
         setTimeout(() => {
             console.log("\x1b[31m[RESTART]\x1b[0m Tiến trình đang thoát để Render tự bật lại...");
             process.exit(0);

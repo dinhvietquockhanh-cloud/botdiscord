@@ -5,7 +5,6 @@ const express = require('express');
 const User = require('./models/User');
 require('dotenv').config();
 
-// --- CẤU HÌNH HỆ THỐNG ---
 const TICKET_CATEGORY_ID = "1486614545198747749";
 const ADMIN_ROLE_ID = "1401118146177404978";
 const LOG_CHANNEL_ID = "1486412768952188948";
@@ -40,7 +39,6 @@ const c = {
     white: "\x1b[37m", gray: "\x1b[90m", reset: "\x1b[0m", bold: "\x1b[1m"
 };
 
-// --- HỆ THỐNG LOG ---
 async function sendRemoteLog(content, status = 'INFO') {
     try {
         const channel = await client.channels.fetch(LOG_CHANNEL_ID).catch(() => null);
@@ -69,7 +67,6 @@ const log = async (msg, type = 'INFO', sendToDiscord = true) => {
     }
 };
 
-// --- LOAD COMMANDS ---
 const commandFolders = fs.readdirSync('./commands');
 for (const folder of commandFolders) {
     const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
@@ -79,7 +76,6 @@ for (const folder of commandFolders) {
     }
 }
 
-// --- KẾT NỐI DATABASE & SERVER ---
 mongoose.connect(process.env.MONGO_URI)
     .then(() => log("Database Connected", "DB"))
     .catch(err => log(`Mongoose Error: ${err.message}`, 'ERR'));
@@ -90,10 +86,8 @@ app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
     log(`Web Server Online: Port ${process.env.PORT || 3000}`, "SUCCESS");
 });
 
-// Login bot ngoài các callback để tránh loop
 client.login(process.env.TOKEN);
 
-// --- SỰ KIỆN BOT ---
 client.once('ready', async () => {
     process.stdout.write('\x1Bc');
     const banner = `[31mCORE SYSTEM READY - VERSION: ${VERSION}[0m`;
@@ -171,8 +165,6 @@ client.on('interactionCreate', async interaction => {
 
 client.on('messageCreate', async message => {
     if (message.author.bot || !message.guild) return;
-
-    // --- LOGIC KINH NGHIỆM ---
     let user = await User.findOneAndUpdate(
         { userId: message.author.id },
         { $getOnInsert: { xp: 0, level: 1, money: 0, lastMessage: 0 } },
@@ -191,7 +183,6 @@ client.on('messageCreate', async message => {
         await user.save();
     }
 
-    // --- LỆNH ---
     if (!message.content.startsWith(prefix)) return;
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
