@@ -1,12 +1,12 @@
 const { EmbedBuilder } = require('discord.js');
 const User = require('../../models/User'); 
-
+git add .
 const cooldowns = new Map();
 
 module.exports = {
     name: 'rob',
     async execute(message, args) {
-        const cooldownTime = 30 * 1000;
+        const cooldownTime = 30 * 1000; 
         const now = Date.now();
         const userCooldown = cooldowns.get(message.author.id);
 
@@ -15,7 +15,7 @@ module.exports = {
 
             if (now < expirationTime) {
                 const timeLeft = Math.ceil((expirationTime - now) / 1000);
-                return message.reply(`👮 Bình tĩnh đê! Cảnh sát đang tuần tra, quay lại sau **${timeLeft} giây** nữa nhé.`);
+                return message.reply(`🚨 **Cảnh báo:** Bạn đang bị cảnh sát theo dõi! Quay lại sau **${timeLeft} giây** nữa để hành sự.`);
             }
         }
 
@@ -46,7 +46,8 @@ module.exports = {
                 .setColor('#00FF00')
                 .setTitle('🥷 VỤ TRỘM THÀNH CÔNG!')
                 .setDescription(`Bạn đã lẻn vào nhà **${target.user.username}** và cuỗm mất **${reward.toLocaleString()}$**!`)
-                .setFooter({ text: 'Nghề này hái ra tiền đấy!' });
+                .setFooter({ text: 'Nghề này hái ra tiền đấy!' })
+                .setTimestamp();
             message.channel.send({ embeds: [winEmbed] });
         } else {
             user.money -= penalty;
@@ -56,7 +57,8 @@ module.exports = {
                 .setColor('#FF0000')
                 .setTitle('👮 BỊ CẢNH SÁT BẮT!')
                 .setDescription(`Bạn bị **${target.user.username}** phát hiện và báo cảnh sát. Bạn bị phạt **${penalty.toLocaleString()}$**!`)
-                .setFooter({ text: 'Đi đêm lắm có ngày gặp ma...' });
+                .setFooter({ text: 'Đi đêm lắm có ngày gặp ma...' })
+                .setTimestamp();
             message.channel.send({ embeds: [loseEmbed] });
         }
     },
