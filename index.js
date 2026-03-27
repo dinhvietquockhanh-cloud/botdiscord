@@ -63,7 +63,7 @@ app.listen(process.env.PORT || 3000);
 client.login(process.env.TOKEN);
 
 client.once('ready', () => {
-    log(`${ADMIN_NAME} Online - Đã fix lỗi prefix và ticket`, "SUCCESS");
+    log(`${ADMIN_NAME} Online - DEV : DVQK4`, "SUCCESS");
     client.user.setActivity(`${ADMIN_NAME} | !help`, { type: ActivityType.Streaming, url: 'https://www.twitch.tv/discord' });
 });
 
