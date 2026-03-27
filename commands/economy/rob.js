@@ -6,7 +6,7 @@ const cooldowns = new Map();
 module.exports = {
     name: 'rob',
     async execute(message, args) {
-        const cooldownTime = 20 * 1000;
+        const cooldownTime = 30 * 1000;
         const now = Date.now();
         const userCooldown = cooldowns.get(message.author.id);
 
