@@ -5,7 +5,6 @@ const express = require('express');
 const User = require('./models/User'); 
 require('dotenv').config();
 
-// --- CONFIG ID CHUẨN CỦA ÔNG ---
 const TICKET_CATEGORY_ID = "1486614545198747749";
 const ADMIN_ROLE_ID = "1401118146177404978";
 const LOG_CHANNEL_ID = "1486412768952188948"; 
@@ -17,6 +16,7 @@ const NEWS_CHANNEL_ID = "1440238187350851687";
 const CHAT_CHANNEL_ID = "1463931008356192591";
 
 const ADMIN_NAME = "DVQK4";
+const prefix = "!";
 
 const client = new Client({
     intents: [
@@ -29,33 +29,23 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// --- HỆ THỐNG LOG ĐẨY VÀO ROOM DISCORD & FIX LỖI 429 ---
 const log = async (msg, type = 'INFO') => {
     const time = new Date().toLocaleTimeString();
     const logText = `[${time}] [${type}] ${msg}`;
-    
     console.log(logText); 
 
     try {
         const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
         if (logChannel) {
-            const colors = { 'INFO': '#ffffff', 'SUCCESS': '#00ff00', 'ERR': '#ff0000', 'CMD': '#00ffff', 'BTN': '#ff00ff' };
-            let finalMsg = `\`\`\`${logText}\`\`\``;
-            
-            // Nếu là lỗi 429, thêm cảnh báo cho ông dễ thấy
-            if (msg.includes('429')) {
-                finalMsg = `⚠️ **CẢNH BÁO SPAM API:**\n\`\`\`${logText}\`\`\`\n> *Ông bớt gõ lệnh Crypto lại hoặc đổi API Key đi, nó chặn mẹ rồi!*`;
-            }
-
+            const colors = { 'INFO': '#ffffff', 'SUCCESS': '#00ff00', 'ERR': '#ff0000', 'CMD': '#00ffff' };
             const logEmbed = new EmbedBuilder()
                 .setColor(colors[type] || '#ffffff')
-                .setDescription(finalMsg);
+                .setDescription(`\`\`\`${logText}\`\`\``);
             await logChannel.send({ embeds: [logEmbed] });
         }
-    } catch (e) { console.error("Lỗi log Discord:", e.message); }
+    } catch (e) { console.error("Lỗi log:", e.message); }
 };
 
-// LOAD COMMANDS
 const commandFolders = fs.readdirSync('./commands');
 for (const folder of commandFolders) {
     const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
@@ -73,11 +63,10 @@ app.listen(process.env.PORT || 3000);
 client.login(process.env.TOKEN);
 
 client.once('ready', () => {
-    log(`${ADMIN_NAME} Online - Đã sẵn sàng bắt lỗi 429`, "SUCCESS");
+    log(`${ADMIN_NAME} Online - Đã fix lỗi prefix và ticket`, "SUCCESS");
     client.user.setActivity(`${ADMIN_NAME} | !help`, { type: ActivityType.Streaming, url: 'https://www.twitch.tv/discord' });
 });
 
-// --- WELCOME (BẢN COME VISIT ME IN HELL) ---
 client.on('guildMemberAdd', async member => {
     try {
         const welcomeChannel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID);
@@ -85,26 +74,24 @@ client.on('guildMemberAdd', async member => {
         const botAvatar = member.client.user.displayAvatarURL({ dynamic: true, size: 512 });
         const welcomeEmbed = new EmbedBuilder()
             .setColor('#2f3136') 
-            .setAuthor({ name: `HỆ THỐNG QUẢN TRỊ 🎪 GÀ RÁN JOLIBEE 🎪`, iconURL: botAvatar })
+            .setAuthor({ name: `HỆ THỐNG QUẢN TRỊ`, iconURL: botAvatar })
             .setTitle(`🎊 PHÁT HIỆN LINH HỒN MỚI`)
             .setThumbnail(botAvatar)
-            .setDescription(`Chào mừng <@${member.id}> gia nhập lãnh địa!\n\n> *Dữ liệu đã được lưu trữ.*`)
+            .setDescription(`Chào mừng <@${member.id}> đã đặt chân tới lãnh địa!\n\n> *Chúng tôi đã ghi nhận sự hiện diện của bạn vào kho lưu trữ dữ liệu.*`)
             .addFields(
-                { name: '🛡️ NHIỆM VỤ', value: `Xác minh tại <#${VERIFY_CHANNEL_ID}>`, inline: false },
-                { name: '📍 KHU VỰC', value: `<#${RULES_CHANNEL_ID}> | <#${NEWS_CHANNEL_ID}> | <#${CHAT_CHANNEL_ID}>`, inline: false }
+                { name: '🛡️ NHIỆM VỤ BẮT BUỘC', value: `Di chuyển tới <#${VERIFY_CHANNEL_ID}> để **Xác Minh**.`, inline: false },
+                { name: '📍 CÁC KHU VỰC CẦN BIẾT', value: `• Luật lệ: <#${RULES_CHANNEL_ID}>\n• Tin tức: <#${NEWS_CHANNEL_ID}>\n• Sảnh chờ: <#${CHAT_CHANNEL_ID}>`, inline: false }
             )
-            .setImage('https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExd29pbjd1OWRxcnI5c3c4Y3I2NzVlZXl1N2VhY3AzOHAzOWJjbGxxZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/bU8qQZvfES4UM/giphy.gif')
-            .setFooter({ text: `ID: ${member.id} | Tổng: ${member.guild.memberCount}` })
+            .setImage('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjEx.../giphy.gif') // Link GIF HELL của ông
+            .setFooter({ text: `ID Thành viên: ${member.id} | Tổng: ${member.guild.memberCount}` })
             .setTimestamp();
         await welcomeChannel.send({ content: `||Chào mừng <@${member.id}>||`, embeds: [welcomeEmbed] });
     } catch (e) { log(e.message, "ERR"); }
 });
 
-// --- MESSAGE & XP ---
 client.on('messageCreate', async message => {
     if (message.author.bot || !message.guild) return;
 
-    // Logic XP (Của ông)
     let userData = await User.findOne({ userId: message.author.id });
     if (!userData) userData = new User({ userId: message.author.id, xp: 0, level: 1, lastMessage: 0 });
 
@@ -115,7 +102,7 @@ client.on('messageCreate', async message => {
         if (userData.xp >= (userData.level * 150)) {
             userData.level += 1;
             userData.xp = 0;
-            const lvMsg = await message.channel.send(`🎊 <@${message.author.id}> đột phá lên **Cấp ${userData.level}**!`);
+            const lvMsg = await message.channel.send(`🎊 Chúc mừng <@${message.author.id}> lên **Cấp ${userData.level}**!`);
             setTimeout(() => lvMsg.delete().catch(() => null), 5000);
         }
         await userData.save();
@@ -125,66 +112,62 @@ client.on('messageCreate', async message => {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
     
-    log(`${message.author.tag} gõ: ${prefix}${commandName} (${message.channel.name})`, "CMD");
+    log(`${message.author.tag} gõ lệnh: ${prefix}${commandName}`, "CMD");
 
     const command = client.commands.get(commandName);
     if (command) {
         try {
             setTimeout(() => message.delete().catch(() => null), 5000);
             await command.execute(message, args, log);
-        } catch (e) { log(`Lỗi lệnh ${commandName}: ${e.message}`, "ERR"); }
+        } catch (e) { log(`Lỗi: ${e.message}`, "ERR"); }
     }
 });
 
-// --- INTERACTION (TICKET & VERIFY) ---
 client.on('interactionCreate', async interaction => {
     if (!interaction.isButton()) return;
-    log(`${interaction.user.tag} bấm nút: ${interaction.customId}`, "BTN");
 
     if (interaction.customId === 'verify_user' || interaction.customId === 'xacminh') {
         const role = interaction.guild.roles.cache.get(VERIFY_ROLE_ID);
         if (role) {
             await interaction.member.roles.add(role);
-            await interaction.reply({ content: "🔥 Đã xác minh!", flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: "🔥 Đã xác minh thành công!", flags: MessageFlags.Ephemeral });
         }
     }
 
     if (interaction.customId === 'create_ticket') {
-        try {
-            const ticketChannel = await interaction.guild.channels.create({
-                name: `ticket-${interaction.user.username}`,
-                type: ChannelType.GuildText,
-                parent: TICKET_CATEGORY_ID,
-                permissionOverwrites: [
-                    { id: interaction.guild.id, deny: [PermissionFlagsBits.ViewChannel] },
-                    { id: interaction.user.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory] },
-                    { id: ADMIN_ROLE_ID, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages] }
-                ]
-            });
+        const ticketChannel = await interaction.guild.channels.create({
+            name: `ticket-${interaction.user.username}`,
+            type: ChannelType.GuildText,
+            parent: TICKET_CATEGORY_ID,
+            permissionOverwrites: [
+                { id: interaction.guild.id, deny: [PermissionFlagsBits.ViewChannel] },
+                { id: interaction.user.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory] },
+                { id: ADMIN_ROLE_ID, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages] }
+            ]
+        });
 
-            const ticketEmbed = new EmbedBuilder()
-                .setColor('#ff0000')
-                .setAuthor({ name: `HỆ THỐNG HỖ TRỢ DVQK4`, iconURL: interaction.user.displayAvatarURL() })
-                .setTitle('🎫 ĐÃ TIẾP NHẬN YÊU CẦU')
-                .addFields(
-                    { name: '👤 Chủ Ticket', value: `${interaction.user.tag}`, inline: true },
-                    { name: '⏰ Thời gian', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true }
-                )
-                .setFooter({ text: 'Nhấn nút để đóng ticket' })
-                .setTimestamp();
+        const ticketEmbed = new EmbedBuilder()
+            .setColor('#ff0000')
+            .setAuthor({ name: `HỆ THỐNG HỖ TRỢ DVQK4`, iconURL: interaction.user.displayAvatarURL() })
+            .setTitle('🎫 ĐÃ TIẾP NHẬN YÊU CẦU')
+            .setDescription(`Chào <@${interaction.user.id}>, admin sẽ hỗ trợ bạn sớm nhất.`)
+            .addFields(
+                { name: '👤 Chủ Ticket', value: `${interaction.user.tag}`, inline: true },
+                { name: '⏰ Thời gian mở', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true }
+            )
+            .setFooter({ text: 'ĐÓNG' })
+            .setTimestamp();
 
-            const row = new ActionRowBuilder().addComponents(
-                new ButtonBuilder().setCustomId('close_ticket').setLabel('Đóng Ticket').setStyle(ButtonStyle.Danger)
-            );
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder().setCustomId('close_ticket').setLabel('Đóng').setStyle(ButtonStyle.Danger)
+        );
 
-            await ticketChannel.send({ content: `<@&${ADMIN_ROLE_ID}>`, embeds: [ticketEmbed], components: [row] });
-            await interaction.reply({ content: `✅ Đã tạo: ${ticketChannel}`, flags: MessageFlags.Ephemeral });
-
-        } catch (e) { log(e.message, "ERR"); }
+        await ticketChannel.send({ content: `<@&${ADMIN_ROLE_ID}>`, embeds: [ticketEmbed], components: [row] });
+        await interaction.reply({ content: `✅ Đã tạo kênh hỗ trợ: ${ticketChannel}`, flags: MessageFlags.Ephemeral });
     }
 
     if (interaction.customId === 'close_ticket') {
-        await interaction.reply("🔒 Đóng sau 5s...");
+        await interaction.reply("🔒 Ticket sẽ được đóng sau 5 giây...");
         setTimeout(() => interaction.channel.delete().catch(() => null), 5000);
     }
 });
